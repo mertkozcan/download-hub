@@ -1,0 +1,63 @@
+{
+  "name": "modfetch",
+  "productName": "Download Hub",
+  "version": "0.1.0",
+  "description": "Download Hub - personal download manager",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node test/smoke.js",
+    "dist": "electron-builder --win nsis",
+    "release": "node scripts/release.js",
+    "serve-updates": "node scripts/serve-updates.js"
+  },
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "electron": "^45.1.0",
+    "electron-builder": "^26.18.0"
+  },
+  "dependencies": {
+    "adm-zip": "^0.6.1",
+    "electron-updater": "^6.8.11"
+  },
+  "author": "mertk",
+  "build": {
+    "appId": "com.personal.downloadhub",
+    "productName": "Download Hub",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**",
+      "ui/**",
+      "plugins/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "extension",
+        "to": "extension"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "shortcutName": "Download Hub",
+      "artifactName": "DownloadHub-Setup-${version}.${ext}"
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://github.com/mertkozcan/download-hub/releases/latest/download"
+      }
+    ]
+  },
+  "repository": "github:mertkozcan/download-hub"
+}

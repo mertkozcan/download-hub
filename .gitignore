@@ -1,0 +1,9 @@
+node_modules/
+dist/
+updates/
+*.log
+crash.log
+e.txt
+o.txt
+err.txt
+out.txt

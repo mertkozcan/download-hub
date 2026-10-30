@@ -1,0 +1,12 @@
+{
+  "_comment": "Template (ignored because the file name starts with '_'). Copy to e.g. mysite.json and edit.",
+  "id": "mysite",
+  "name": "My Site",
+  "match": ["^https://files\\.example\\.com/item/(\\d+)"],
+  "login": { "url": "https://files.example.com/login" },
+  "referer": true,
+  "resolve": {
+    "type": "html",
+    "pattern": "href=\"(/download/[^\"]+)\""
+  }
+}

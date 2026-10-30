@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Download Hub Bridge",
+  "version": "0.1.0",
+  "description": "Sends browser downloads to the Download Hub desktop app (only while it is running).",
+  "permissions": ["downloads", "cookies", "storage"],
+  "host_permissions": ["<all_urls>", "http://127.0.0.1:17653/*"],
+  "background": { "service_worker": "background.js" },
+  "options_page": "options.html",
+  "action": { "default_title": "Download Hub Bridge", "default_popup": "options.html" }
+}

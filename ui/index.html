@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'">
+<title>Download Hub</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside>
+  <div class="logo"><span>⬇</span> Download Hub</div>
+  <button data-tab="dl" class="on">İndirmeler <em id="badge"></em></button>
+  <button data-tab="hist">Geçmiş</button>
+  <button data-tab="stats">İstatistikler</button>
+  <button data-tab="sites">Siteler</button>
+  <button data-tab="settings">Ayarlar</button>
+  <div class="grow"></div>
+  <div id="speed" class="speed">0 B/s</div>
+</aside>
+<main>
+<div id="toast"></div>
+<div id="modal" class="modal" hidden><div class="mbox">
+  <h2>Tarayıcıdan indirme isteği <em id="mcount"></em></h2>
+  <div class="mfile"><b id="mname"></b><div class="note" id="murl"></div><div class="note" id="msite"></div></div>
+  <div class="row"><label>Kaydedilecek yer <input id="mdir" readonly size="36"></label><button id="mpick">Seç…</button></div>
+  <div class="row"><label>İndirdikten sonra <select id="mpreset"></select></label></div>
+  <div class="row"><span class="grow"></span><button id="mno">Reddet</button><button id="myes" class="primary">İndir</button></div>
+</div></div>
+<div id="upd" class="banner upd" hidden><span id="updtxt"></span><button id="updgo" class="primary">Güncelle</button></div>
+<div id="clip" class="banner" hidden><span id="cliptxt"></span><button id="clipadd" class="primary">Ekle</button><button id="clipno">Kapat</button></div>
+
+<section id="dl">
+  <div class="card drop" id="drop">
+    <div class="hero">
+      <textarea id="urls" rows="3" spellcheck="false" placeholder="İndirme linkini buraya yapıştır…  (http / https / nxm://)&#10;Birden fazla link için alt alta yapıştır. Sürükle-bırak da çalışır."></textarea>
+      <button id="add" class="primary big">⬇ İndir</button>
+    </div>
+    <div class="row opts">
+      <label>Kaydedilecek yer <input id="dir" placeholder="varsayılan klasör" readonly></label>
+      <button id="pick">Seç…</button>
+      <button id="dirreset" title="Varsayılana dön">↺</button>
+      <button id="opendir" title="İndirme klasörünü aç">📂 Klasörü aç</button>
+      <span class="grow"></span>
+      <label>İndirdikten sonra <select id="preset"></select></label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="chips" id="chips">
+      <button data-f="all" class="on">Hepsi</button><button data-f="active">Aktif</button><button data-f="done">Biten</button><button data-f="error">Hatalı</button>
+    </div>
+    <span class="grow"></span>
+    <button id="pauseall">Tümünü duraklat</button><button id="resumeall">Tümünü başlat</button><button id="clear">Bitenleri ve hatalıları temizle</button>
+  </div>
+  <div id="jobs"></div>
+  <div id="empty" class="empty">Henüz indirme yok.<br><small>Link yapıştır, tarayıcı eklentisini kur veya Siteler’den bir sitede gezin.</small></div>
+</section>
+
+<section id="hist" hidden>
+  <div class="row"><input id="hq" placeholder="Ara (dosya, site)…" class="grow"><button id="hclear">Geçmişi temizle</button></div>
+  <div id="hlist"></div>
+</section>
+
+<section id="stats" hidden>
+  <div class="cards" id="cards"></div>
+  <div class="card"><h3>Son 14 gün</h3><div id="chart" class="chart"></div></div>
+  <div class="card"><h3>Siteye göre</h3><div id="bysite"></div></div>
+</section>
+
+<section id="sites" hidden>
+  <p class="hint">Giriş gerekiyorsa “Tarayıcıyı aç”a bas, kendin giriş yap (doğrulama çıkarsa onu da sen geç). Oturum çerezleri saklanır, şifre saklanmaz. Bu pencerede indirme tıklaması veya nxm:// linki otomatik kuyruğa girer.</p>
+  <div id="sitelist"></div>
+  <div class="row"><button id="plugfolder">Eklenti klasörünü aç</button><button id="plugreload">Yeniden yükle</button></div>
+  <pre id="errs"></pre>
+</section>
+
+<section id="settings" hidden>
+  <h3>Genel</h3>
+  <div class="card">
+    <div class="row"><label>Varsayılan indirme klasörü <input id="s-dir" readonly size="40"></label><button id="s-pick">Seç…</button></div>
+    <div class="row"><label>Aynı anda <input id="s-conc" type="number" min="1" max="8" style="width:60px"> indirme</label></div>
+    <div class="row"><label><input type="checkbox" id="s-confirm"> Tarayıcıdan gelen indirmelerde önce onay sor</label></div>
+    <div class="row"><label><input type="checkbox" id="s-auto"> Windows açılınca başlat (tepside)</label></div>
+  </div>
+  <h3>Güncelleme</h3>
+  <div class="card">
+    <div class="row"><span id="s-ver" class="note"></span><span id="s-updst" class="note"></span></div>
+    <div class="row"><label>Güncelleme adresi <input id="s-upurl" placeholder="http://192.168.1.20:8080" size="40"></label><button id="s-upcheck">Şimdi kontrol et</button></div>
+    <p class="hint">Güncellemeleri sunan bilgisayarda <code>npm run release</code> ve <code>npm run serve-updates</code> çalıştırılır; adres onun IP’sidir. Boş bırakırsan güncelleme kontrolü kapalıdır.</p>
+  </div>
+  <h3>Tarayıcı eklentisi (Chrome / Edge)</h3>
+  <div class="card">
+    <p class="hint">Tarayıcıda başlayan her indirme Download Hub’a yönlendirilir. Uygulama kapalıysa tarayıcı normal indirir.
+    Kurulum: <code>chrome://extensions</code> → Geliştirici modu → “Paketlenmemiş yükle” → eklenti klasörü. Sonra eklenti seçeneklerine aşağıdaki anahtarı yapıştır.</p>
+    <div class="row"><input id="s-token" readonly size="42"><button id="s-copy">Kopyala</button><button id="s-ext">Eklenti klasörünü aç</button></div>
+  </div>
+  <h3>Post-işlem ön ayarları</h3>
+  <div id="presets"></div>
+  <div class="card">
+    <div class="row">
+      <label>Ad <input id="p-name" placeholder="Witcher 3 Mods"></label>
+      <label><input type="checkbox" id="p-extract" checked> Zip’i aç</label>
+      <label>Şuraya <input id="p-to" placeholder="F:\...\The Witcher 3\Mods" size="34"></label>
+      <button id="p-pick">…</button>
+      <label><input type="checkbox" id="p-del"> Zip’i sil</label>
+      <button id="p-add" class="primary">Ekle</button>
+    </div>
+  </div>
+</section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
